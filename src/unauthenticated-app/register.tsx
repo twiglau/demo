@@ -1,26 +1,22 @@
-import React, { FormEvent } from 'react'
+import React from 'react'
 import { useAuth } from 'context/auth-context'
+import { Button, Form, Input } from 'antd'
+import { LongButton } from 'unauthenticated-app'
 
 export const RegisterScreen = () => {
     const { register } = useAuth()
     
-    const __handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    const __handleSubmit = (values: {username: string, password: string}) => {
 
-        evt.preventDefault()
-        const username = (evt.currentTarget.elements[0] as HTMLFormElement).value
-        const password = (evt.currentTarget.elements[1] as HTMLFormElement).value
-        register({username, password})
+        register(values)
     }
-    return <form onSubmit={__handleSubmit}>
-        
-        <div>
-            <label htmlFor='username'>用户名</label>
-            <input type='text' id={'username'} />
-        </div>
-        <div>
-            <label htmlFor='password'>密码</label>
-            <input type='password' id={'password'} />
-        </div>
-        <button type={'submit'}>注册</button>
-    </form>
+    return <Form onFinish={__handleSubmit}>
+        <Form.Item name={'username'} rules={[{ required: true, message: '请输入用户名'}]}>
+            <Input placeholder={'用户名'} type='text' id={'username'} />
+        </Form.Item>
+        <Form.Item name={'password'} rules={[{required: true, message: '请输入密码'}]}>
+            <Input placeholder={'密码'} type='password' id={'password'} />
+        </Form.Item>
+        <LongButton type={'primary'} htmlType={'submit'}>注册</LongButton>
+    </Form>
 }
