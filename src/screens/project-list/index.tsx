@@ -5,6 +5,7 @@ import qs from 'qs'
 import { cleanObject, apiUrl } from 'utils'
 import useMount from 'hooks/useMount'
 import useDebounce from 'hooks/useDebounce'
+import { useHttp } from 'utils/http'
 
 
 
@@ -14,25 +15,18 @@ export const ProjectListScreen = () => {
         name: '',
         personId: ''
     })
+    const client = useHttp()
 
     const debounceParam = useDebounce(param, 2000)
 
     const [list, setList ] = useState([])
 
     useEffect(() => {
-        fetch(`${apiUrl}/projects?${qs.stringify(cleanObject(debounceParam))}`).then(async res => {
-            if(res.ok) {
-                setList(await res.json())
-            }
-        })
-    }, [debounceParam])
+        client('projects', { data: cleanObject(debounceParam)}).then(setList)
+    }, [debounceParam, client])
 
     useMount(() => {
-        fetch(`${apiUrl}/users`).then(async res => {
-            if(res.ok) {
-                setUsers(await res.json())
-            }
-        })
+        client('users',{}).then(setUsers)
     })
 
     return <div>
