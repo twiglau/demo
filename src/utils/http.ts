@@ -8,7 +8,10 @@ interface Config extends RequestInit {
     token?:string,
     data?:object
 }
-export const http = async (endpoint: string, {data, token, headers, ...customConfig}: Config) => {
+export const http = async (
+    endpoint: string, 
+    {data, token, headers, ...customConfig}: Config = {}
+) => {
 
     const config = {
         method: 'GET',
@@ -28,7 +31,7 @@ export const http = async (endpoint: string, {data, token, headers, ...customCon
     .then(async response => {
         if(response.status === 401) {
             await auth.logout()
-            window.location.reload()
+            // window.location.reload()
             return Promise.reject({message: '请重新登录'})
         }
         const data = await response.json()
@@ -52,7 +55,7 @@ export const useHttp = () => {
 
     // utility type 的用法：
     // 用泛型给它传入一个其他类型，然后 utility type 对这个类型进行某种操作
-    return useCallback((...[endpoint, config]: Parameters<typeof http>) => http(endpoint, {...config, token: user?.token}), [user?.token])
+    return (...[endpoint, config]: Parameters<typeof http>) => http(endpoint, {...config, token: user?.token}) //useCallback()
 }
 
 // 类型别名, Utility Type 讲解

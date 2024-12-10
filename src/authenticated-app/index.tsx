@@ -4,6 +4,7 @@ import styled from '@emotion/styled'
 import { Row } from 'components/lib'
 import { ProjectListScreen } from 'screens/project-list'
 import { Button, Dropdown } from 'antd'
+import type {MenuProps} from 'antd'
 // 可以把 svg 当做组件使用 
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
 import { useAuth } from 'context/auth-context'
@@ -33,11 +34,24 @@ const PageHeader = () => {
     )
 }
 
+
 const User = () => {
     const { user, logout } = useAuth()
+
+    const items: MenuProps['items'] = [
+        {
+            key:'1',
+            label: (
+                <Button type={ 'link' } onClick={ logout }>
+                  登出
+                </Button>
+            )
+        }
+    ]
+
     return (
-        <Dropdown>
-            <Button >
+        <Dropdown menu={{items}}>
+            <Button type={'link'} onClick={e => e.preventDefault()}>
                 Hi, {user?.name}
             </Button>
         </Dropdown>
