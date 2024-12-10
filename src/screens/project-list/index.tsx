@@ -19,13 +19,13 @@ export const ProjectListScreen = () => {
     const client = useHttp()
 
     const debounceParam = useDebounce(param, 2000)
-
+    
     const [list, setList ] = useState([])
 
     useEffect(() => {
         client('projects', { data: cleanObject(debounceParam)}).then(setList)
-        //TODO 1
-        // eslint-disable-next-line
+        
+        // eslint-disable-next-line   react-hooks/exhaustive-deps
     }, [debounceParam])
 
     useMount(() => {
@@ -35,7 +35,7 @@ export const ProjectListScreen = () => {
     return <Container>
         <h1>项目列表</h1>
         <SearchPanel users={users} param={param} setParam={setParam} />
-        <List users={users} list={list} />
+        <List users={users} dataSource={list} />
     </Container>
 }
 

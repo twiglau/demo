@@ -9,7 +9,7 @@ function App() {
   const { user } = useAuth()
   return (
     <div className="App">
-      <AuthenticatedApp />
+      { user ? <AuthenticatedApp /> :<UnauthenticatedApp />}
     </div>
   );
 }
