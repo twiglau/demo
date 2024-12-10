@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Typography } from "antd";
 
 export const Row = styled.div<{
     gap?: number | boolean,
@@ -21,3 +22,15 @@ export const Row = styled.div<{
         };
     }
 `
+
+
+// 类型守卫
+const isError = (value: any): value is Error => value?.message
+export const ErrorBox = ({error}:{error: Error | null}) => {
+    if(isError(error)) {
+        return (
+            <Typography.Text type={'danger'}>{error?.message}</Typography.Text>
+        )
+    }
+    return null
+}
