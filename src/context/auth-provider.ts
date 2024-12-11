@@ -1,5 +1,6 @@
 import { User } from "types/user"
 import { apiUrl } from "utils"
+import { http } from 'utils/http'
 
 const localStorageKey = '__auth_provider_token__'
 
@@ -10,35 +11,29 @@ export const handleUserResponse = ({user}: { user: User}) => {
     return user
 }
 
-export const login = (data: { username: string, password: string}) => {
-    return fetch(`${apiUrl}/login`, {
+export const login = async (data: { username: string, password: string}) => {
+    
+    return http('login', {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        data
     }).then(async res => {
-        if(res.ok) {
-           return handleUserResponse(await res.json())
-        } else {
-            return Promise.reject(data)
-        }
+        return handleUserResponse(res)
     })
 }
 
-export const register = (data: { username: string, password: string}) => {
-    return fetch(`${apiUrl}/register`, {
+export const register = async (data: { username: string, password: string}) => {
+
+    return http('register', {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        data
     }).then(async res => {
-        if(res.ok) {
-           return handleUserResponse(await res.json())
-        } else {
-            return Promise.reject(data)
-        }
+        return handleUserResponse(res)
     })
 }
 

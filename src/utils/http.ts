@@ -1,6 +1,6 @@
 import { apiUrl } from "utils";
 import qs from 'qs';
-import * as auth from 'auth-provider'
+import * as auth from 'context/auth-provider'
 import { useAuth } from "context/auth-context";
 import { useCallback } from "react";
 
@@ -29,6 +29,7 @@ export const http = async (
     }
     return window.fetch(`${apiUrl}/${endpoint}`, config)
     .then(async response => {
+        
         if(response.status === 401) {
             await auth.logout()
             // window.location.reload()

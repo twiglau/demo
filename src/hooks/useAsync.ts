@@ -28,7 +28,7 @@ export const useAsync = <T>(initialState?: State<T>) => {
         stat: 'error',
         data: null
     })
-    const run = (promise: Promise<T>) => {
+    const run = async (promise: Promise<T>) => {
         if(!promise || !promise.then) {
             throw new Error('请传入 Promise 类型数据')
         }
@@ -38,7 +38,7 @@ export const useAsync = <T>(initialState?: State<T>) => {
             return data
         }).catch(error => {
             setError(error)
-            return error
+            return Promise.reject(error)
         })
     }
 

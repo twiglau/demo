@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react'
-import * as auth from 'auth-provider'
+import * as auth from 'context/auth-provider'
 import { User } from 'types/user'
 import { http } from 'utils/http';
 import useMount from 'hooks/useMount';
