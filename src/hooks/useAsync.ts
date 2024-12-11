@@ -28,6 +28,13 @@ export const useAsync = <T>(initialState?: State<T>) => {
         stat: 'error',
         data: null
     })
+
+    /**
+     * async 函数
+     * 1. return 正常返回值 =>相当于resolve到结果
+     * 2. return Promise.reject(error)相当于reject掉错误
+     * 3. 当用 try...catch 时， 就能捕获的 reject 的结果了
+     */
     const run = async (promise: Promise<T>) => {
         if(!promise || !promise.then) {
             throw new Error('请传入 Promise 类型数据')
