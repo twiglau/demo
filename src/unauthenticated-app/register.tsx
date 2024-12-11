@@ -1,17 +1,20 @@
 import React from 'react'
 import { useAuth } from 'context/auth-context'
-import { Button, Form, Input } from 'antd'
+import { Form, Input } from 'antd'
 import { LongButton } from 'unauthenticated-app'
+import { useAsync } from 'hooks/useAsync'
 
 export const RegisterScreen = ({onError}:{onError:(error: Error) => void}) => {
     const { register } = useAuth()
+    const { run, isLoading } = useAsync(undefined, { throwOnError: true })
     
-    const __handleSubmit = async ({cpassword, ...params}: {cpassword:string,password:string,username:string}) => {
+    //TODO： 使用参数的方式
+    const __handleSubmit = async ({cPwd, ...params}: {cPwd:string,password:string,username:string}) => {
         try {
-            if(cpassword !== params.password) {
+            if(cPwd !== params.password) {
                 throw new Error('密码不一致')
             }
-            await register(params)
+            await run(register(params))
         } catch (e) {
             onError(e as Error)
         }
@@ -23,9 +26,9 @@ export const RegisterScreen = ({onError}:{onError:(error: Error) => void}) => {
         <Form.Item name={'password'} rules={[{required: true, message: '请输入密码'}]}>
             <Input placeholder={'密码'} type='password' id={'password'} />
         </Form.Item>
-        <Form.Item name={'cpassword'} rules={[{required: true, message: '请确认密码'}]}>
-            <Input placeholder={'确认密码'} type='password' id={'cpassword'} />
+        <Form.Item name={'cPwd'} rules={[{required: true, message: '请确认密码'}]}>
+            <Input placeholder={'确认密码'} type='password' id={'cPwd'} />
         </Form.Item>
-        <LongButton type={'primary'} htmlType={'submit'}>注册</LongButton>
+        <LongButton loading={isLoading} type={'primary'} htmlType={'submit'}>注册</LongButton>
     </Form>
 }

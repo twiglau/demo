@@ -12,7 +12,12 @@ const defaultInitialState: State<null> = {
     error: null
 }
 
-export const useAsync = <T>(initialState?: State<T>) => {
+const defaultConfig = {
+    throwOnError: false
+}
+
+export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defaultConfig) => {
+    const config = {...defaultConfig, ...initialConfig}
     const [state, setState] = useState<State<T>>({
         ...defaultInitialState,
         ...initialState
@@ -44,8 +49,10 @@ export const useAsync = <T>(initialState?: State<T>) => {
             setData(data)
             return data
         }).catch(error => {
+            // TODO：catch会消化异常，如果不主动抛出， 外面是接收不到异常的
             setError(error)
-            return Promise.reject(error)
+            if(config.throwOnError)  return Promise.reject(error)
+            return error
         })
     }
 

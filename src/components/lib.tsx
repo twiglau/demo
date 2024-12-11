@@ -1,5 +1,7 @@
+import React from 'react';
 import styled from "@emotion/styled";
-import { Typography } from "antd";
+import { Spin, Typography } from "antd";
+import type { SpinProps } from 'antd';
 
 export const Row = styled.div<{
     gap?: number | boolean,
@@ -24,7 +26,8 @@ export const Row = styled.div<{
 `
 
 
-// 类型守卫
+
+// TODO: 类型守卫
 const isError = (value: any): value is Error => value?.message
 export const ErrorBox = ({error}:{error: Error | null}) => {
     if(isError(error)) {
@@ -34,3 +37,16 @@ export const ErrorBox = ({error}:{error: Error | null}) => {
     }
     return null
 }
+
+export const FullPageLoading = (config?:Partial<SpinProps>) => (
+    <FullPage>
+        <Spin size={'large'} {...config} />
+    </FullPage>
+)
+
+const FullPage =  styled.div`
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`

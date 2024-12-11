@@ -59,7 +59,7 @@ export const useHttp = () => {
     return (...[endpoint, config]: Parameters<typeof http>) => http(endpoint, {...config, token: user?.token}) //useCallback()
 }
 
-// 类型别名, Utility Type 讲解
+// TODO: 类型别名, Utility Type 讲解
 type Person = {
     name: string;
     age: number;

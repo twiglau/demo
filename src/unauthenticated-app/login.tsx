@@ -7,7 +7,7 @@ import { useAsync } from 'hooks/useAsync'
 
 export const LoginScreen = ( { onError }: { onError: ( error: Error ) => void } ) => {
     const { login } = useAuth()
-    const { run, isLoading } = useAsync()
+    const { run, isLoading } = useAsync(undefined, { throwOnError: true })
     
     const __handleSubmit =async (values: {username: string, password: string}) => {
         try {
