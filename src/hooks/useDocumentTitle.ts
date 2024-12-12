@@ -8,11 +8,11 @@ export const useDocumentTitle = (title:string, keepOnUnmount: boolean = true) =>
     // 在整个生命周期中，ref保持不变
     // 相当于一个容器，从一至终保持里面内容不变
     const oldTitle = useRef(document.title).current
-     
+
     console.log('render oldTitle:', oldTitle)
     
     // 页面加载时： oldTitle === 'React App'(旧title)
-    // 页面加载后(useEffect)： oldTitle === title:string(新title) 
+    // 页面加载后(useEffect)： oldTitle === 'React App' (保持不变)
     
     // 1. 设置当前页面的标题
     useEffect(() => {
@@ -24,7 +24,7 @@ export const useDocumentTitle = (title:string, keepOnUnmount: boolean = true) =>
         return () => {
             if(!keepOnUnmount) 
                 console.log('unMounted oldTitle:', oldTitle)
-                // 页面卸载后，如果不指定依赖，读到的就是 （旧title）
+                // 页面卸载后，读取 oldTitle
                 document.title = oldTitle
         }
     }, [keepOnUnmount, oldTitle])
