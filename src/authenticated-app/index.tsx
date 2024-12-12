@@ -8,6 +8,7 @@ import type {MenuProps} from 'antd'
 // 可以把 svg 当做组件使用 
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
 import { useAuth } from 'context/auth-context'
+import { Test } from 'screens/test'
 
 export const AuthenticatedApp = () => {
     let throwError: any = undefined
@@ -16,6 +17,9 @@ export const AuthenticatedApp = () => {
         <Main>
             {/* TODO: 测试异常 */}
             {/* {throwError.testFunc()} */}
+
+            {/* 测试代码 */}
+            <Test />
            <ProjectListScreen />
         </Main>
     </Container>

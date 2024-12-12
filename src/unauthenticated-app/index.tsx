@@ -7,13 +7,19 @@ import left from 'assets/left.svg'
 import right from 'assets/right.svg'
 import logo from 'assets/logo.svg'
 import { ErrorBox } from "components/lib"
+import { Helmet } from 'react-helmet'
+import { useDocumentTitle } from "hooks/useDocumentTitle"
 
 
 export const UnauthenticatedApp = () => {
     const [ isRegister, setIsRegister ] = useState(false)
     const [error, setError ] = useState<Error|null>(null)
-
+    useDocumentTitle('请登录、注册')
     return <Container>
+        <Helmet>
+            <title>请登录或注册以继续</title>
+            <meta />
+        </Helmet>
         <Header />
         <Background />
         {/*TODO 测试异常 */}

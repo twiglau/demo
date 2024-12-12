@@ -22,6 +22,10 @@ npm run build
 
 # 安装本地 serve
 npm i serve
+
 # 启动打包后文件
+# 如果全局安装，直接使用
 serve -s build
+# 如果项目中安装，使用 npx 启动
+npx serve -s build
 ```

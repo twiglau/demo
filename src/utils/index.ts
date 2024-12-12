@@ -3,6 +3,19 @@ export const isVoid = (value: unknown) => value === undefined || value === null 
 
 export const apiUrl = process.env.REACT_APP_API_URL
 
+
+/**
+ * 传入一个对象和键的集合， 返回对应的对象中的键值对
+ * @param obj 
+ * @param keys 
+ * @returns 
+ */
+export const subset = <O extends {[key:string]:unknown}, K extends keyof O>(obj: O, keys: K[]) => {
+  const filteredEntries = Object.entries(obj)
+                                .filter(([key]) => keys.includes(key as K))
+  
+  return Object.fromEntries(filteredEntries) as Pick<O,K>
+}
 export const cleanObject = (obj?: { [key: string]: unknown}) => {
 
   if(!obj) {

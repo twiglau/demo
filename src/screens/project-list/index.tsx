@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 import { useProjects } from 'hooks/project'
 import { ErrorBox } from 'components/lib'
 import { useUsers } from 'hooks/user'
-
+import { useDocumentTitle } from 'hooks/useDocumentTitle'
 
 const initialData = {
     name: '',
@@ -15,6 +15,7 @@ const initialData = {
 
 export const ProjectListScreen = () => {
     const [ param, setParam ] = useState(initialData)
+    useDocumentTitle('项目列表', false)
 
     const debounceParam = useDebounce(param, 2000)
     
