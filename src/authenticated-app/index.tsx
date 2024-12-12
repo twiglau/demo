@@ -9,6 +9,9 @@ import type {MenuProps} from 'antd'
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
 import { useAuth } from 'context/auth-context'
 import { Test } from 'components/test-closure'
+import {Navigate, Route, Routes} from 'react-router'
+import {BrowserRouter as Router} from 'react-router-dom'
+import { ProjectScreen } from 'screens/projects'
 
 export const AuthenticatedApp = () => {
     let throwError: any = undefined
@@ -20,7 +23,12 @@ export const AuthenticatedApp = () => {
 
             {/* 测试代码 */}
             <Test />
-           <ProjectListScreen />
+            <Router>
+                <Routes>
+                    <Route path={'/projects'} element={<ProjectListScreen />} />
+                    <Route path={'/projects/:projectId/*'} element={<ProjectScreen />}/>
+                </Routes>
+            </Router>
         </Main>
     </Container>
 }
