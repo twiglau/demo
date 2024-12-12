@@ -16,6 +16,8 @@ export const UnauthenticatedApp = () => {
     return <Container>
         <Header />
         <Background />
+        {/*TODO 测试异常 */}
+        <Button onClick={() => {throw new Error('主动错误')}}>测试异常</Button>
         <ShadowCard>
             <Title>{isRegister ? '请登录':'请注册'}</Title>
             <ErrorBox error={error} />

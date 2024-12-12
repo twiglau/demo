@@ -10,11 +10,14 @@ import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
 import { useAuth } from 'context/auth-context'
 
 export const AuthenticatedApp = () => {
-    
+    let throwError: any = undefined
     return <Container>
         <PageHeader />
-        <Main></Main>
-        <ProjectListScreen />
+        <Main>
+            {/* TODO: 测试异常 */}
+            {/* {throwError.testFunc()} */}
+           <ProjectListScreen />
+        </Main>
     </Container>
 }
 

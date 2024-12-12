@@ -14,3 +14,14 @@
 - 监听： `npx json-server db.json`
 
 ## CSS-in-JS
+
+## 如何在打包后，本地运行生产包
+
+```sh
+npm run build
+
+# 安装本地 serve
+npm i serve
+# 启动打包后文件
+serve -s build
+```
