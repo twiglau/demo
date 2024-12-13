@@ -7,7 +7,7 @@ import { useProjects } from 'hooks/project'
 import { ErrorBox } from 'components/lib'
 import { useUsers } from 'hooks/user'
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
-import { useUrlQueryParam } from 'hooks/useUrlQueryParam'
+import { useProjectsSearchParams } from './project-utils'
 
 const initialData = {
     name: '',
@@ -18,12 +18,8 @@ export const ProjectListScreen = () => {
     // const [, setParam ] = useState(initialData)
     useDocumentTitle('项目列表', false)
 
-    // TODO 避免循环调用 
-    // https://codesandbox.io/p/sandbox/holy-monad-wsf5tv
-    // 如何避免循环调用
-    // 基本类型，组件状态：可以放到依赖里；
-    // 非组件状态的对象：绝不可以放到依赖里；
-    const [param, setParam] = useUrlQueryParam(['name', 'personId'])
+   
+    const [param, setParam] = useProjectsSearchParams()
     const debounceParam = useDebounce(param, 2000)
     
     const { isLoading, error, data: list } = useProjects(debounceParam)

@@ -2,14 +2,16 @@
 
 import { Form, Input, Select } from "antd";
 import React from "react"
+import { Project } from "types/project";
 import { User } from 'types/user'
 
 interface SearchPanelProps {
     users: User[],
-    param: {
-        name: string;
-        personId: string;
-    },
+    param: Partial<Pick<Project, 'name'|'personId'>>,
+    // param: {
+    //     name: string;
+    //     personId: string;
+    // },
     setParam: (param: SearchPanelProps['param']) => void;
 }
 export const SearchPanel = ({users, param, setParam}: SearchPanelProps) => {
