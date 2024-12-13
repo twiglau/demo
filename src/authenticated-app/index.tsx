@@ -12,6 +12,7 @@ import { Test } from 'components/test-closure'
 import {Navigate, Route, Routes} from 'react-router'
 import {BrowserRouter as Router} from 'react-router-dom'
 import { ProjectScreen } from 'screens/projects'
+import { resetRoute } from 'utils'
 
 export const AuthenticatedApp = () => {
     let throwError: any = undefined
@@ -22,11 +23,13 @@ export const AuthenticatedApp = () => {
             {/* {throwError.testFunc()} */}
 
             {/* 测试代码 */}
-            <Test />
+            {/* <Test /> */}
             <Router>
                 <Routes>
                     <Route path={'/projects'} element={<ProjectListScreen />} />
                     <Route path={'/projects/:projectId/*'} element={<ProjectScreen />}/>
+                    {/* 如果以上路由没有匹配到，默认跳转到 projects 中 */}
+                    <Route path='*' element={<Navigate to="/projects" replace={true} />} />
                 </Routes>
             </Router>
         </Main>
@@ -38,7 +41,7 @@ const PageHeader = () => {
     return (
         <Header between={true}>
             <HeaderLeft gap={true}>
-                <Button type={'link'}>
+                <Button type={'link'} onClick={resetRoute}>
                      <SoftwareLogo width={'18rem'} color={'rgb(38, 132, 255)'} />
                 </Button>
             </HeaderLeft>

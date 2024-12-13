@@ -29,3 +29,5 @@ serve -s build
 # 如果项目中安装，使用 npx 启动
 npx serve -s build
 ```
+
+## 如何检测无限渲染: 使用 why-did-you-render 库

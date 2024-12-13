@@ -8,7 +8,7 @@ export const apiUrl = process.env.REACT_APP_API_URL
 export const resetRoute = () => (window.location.href = window.location.origin)
 
 /**
- * 传入一个对象和键的集合， 返回对应的对象中的键值对
+ * 传入一个对象和键的集合， 返回对应的对象中的键值对对象
  * @param obj 
  * @param keys 
  * @returns 
