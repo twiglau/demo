@@ -4,6 +4,9 @@ export const isVoid = (value: unknown) => value === undefined || value === null 
 export const apiUrl = process.env.REACT_APP_API_URL
 
 
+// 重置路由
+export const resetRoute = () => (window.location.href = window.location.origin)
+
 /**
  * 传入一个对象和键的集合， 返回对应的对象中的键值对
  * @param obj 
@@ -16,6 +19,12 @@ export const subset = <O extends {[key:string]:unknown}, K extends keyof O>(obj:
   
   return Object.fromEntries(filteredEntries) as Pick<O,K>
 }
+
+/**
+ * 清除object中空值
+ * @param obj 
+ * @returns 
+ */
 export const cleanObject = (obj?: { [key: string]: unknown}) => {
 
   if(!obj) {
