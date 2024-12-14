@@ -1,11 +1,13 @@
 import React from 'react'
 import { User } from 'types/user';
 import { Project } from 'types/project'
-import { Table, TableProps } from 'antd';
+import { Dropdown, Table, TableProps } from 'antd';
+import type {MenuProps}  from 'antd';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom'
 import { Pin } from 'components/pin'
 import { useEditProject } from 'hooks/project';
+import { ButtonNoPadding } from 'components/lib';
 //TODO react-router和react-router-dom的关系
 /**
  * 1. 类似于 react 和 react-dom/react-native/react-vr...
@@ -20,17 +22,38 @@ interface ListProps extends TableProps<Project> {
     users: User[];
     refresh?:() => void;
 }
+
 export const List = ({users, ...props}: ListProps) => {
   const { mutate } = useEditProject()
   // 2. 方式二
 //   const pinProject = (id:number, pin: boolean) => mutate({id, pin})
   // 3. 方式三： 注意，id 已经确定， pin 是点击后确定   柯里化改造函数
   const pinProject = (id:number) => (pin: boolean) => mutate({id,pin}).then(() => props.refresh?.())
+
+  const items: MenuProps['items'] = [
+        {
+            key:'1',
+            label: (
+                <ButtonNoPadding type={ 'link' }>
+                编辑
+                </ButtonNoPadding>
+            )
+        },
+        {
+            key:'2',
+            label: (
+                <ButtonNoPadding type={ 'link' }>
+                删除
+                </ButtonNoPadding>
+            )
+        }
+    ]
+
    return <Table 
    rowKey={"id"}
    pagination={false} 
    columns={[
-    { title: <Pin checked={true} disabled={true} />, render(value, record, idnex){
+    { title: <Pin checked={true} disabled={true} />, render(value, record, index){
         return <Pin 
         checked={record.pin}
         // 1. 方式一
@@ -54,7 +77,13 @@ export const List = ({users, ...props}: ListProps) => {
         return <span>
             {record.created ? dayjs(record.created).format('YYYY/MM/DD'): '无'}
         </span>
-    }}
+    }},
+    {title:'操作',render(value,record) {
+            return <Dropdown menu={{items}}>
+                <ButtonNoPadding type={'link'}>...</ButtonNoPadding>
+            </Dropdown>
+        }
+    }
     
    ]} 
    {...props}

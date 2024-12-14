@@ -3,7 +3,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Row } from 'components/lib'
 import { ProjectListScreen } from 'screens/project-list'
-import { Button, Dropdown } from 'antd'
+import { Dropdown, Button } from 'antd'
 import type {MenuProps} from 'antd'
 // 可以把 svg 当做组件使用 
 import { ReactComponent as SoftwareLogo } from 'assets/software-logo.svg'
@@ -13,6 +13,8 @@ import {Navigate, Route, Routes} from 'react-router'
 import {BrowserRouter as Router} from 'react-router-dom'
 import { ProjectScreen } from 'screens/projects'
 import { resetRoute } from 'utils'
+import { ProjectPopover } from 'components/project-popover'
+import { ButtonNoPadding } from 'components/lib'
 
 export const AuthenticatedApp = () => {
     let throwError: any = undefined
@@ -41,9 +43,10 @@ const PageHeader = () => {
     return (
         <Header between={true}>
             <HeaderLeft gap={true}>
-                <Button type={'link'} onClick={resetRoute}>
+                <ButtonNoPadding type={'link'} onClick={resetRoute}>
                      <SoftwareLogo width={'18rem'} color={'rgb(38, 132, 255)'} />
-                </Button>
+                </ButtonNoPadding>
+                <ProjectPopover />
             </HeaderLeft>
             <HeaderRight>
                 <User />
@@ -75,6 +78,8 @@ const User = () => {
         </Dropdown>
     )
 }
+
+// 暂时性死区
 const Container = styled.div`
     display: grid;
     grid-template-rows: 6rem 1fr;
