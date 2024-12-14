@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useMountedRef } from "./useMountedRef";
 
 interface State<T> {
     error: Error | null;
@@ -23,12 +22,11 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState
     })
-
-    /**
-     * 阻止页面卸载时，进行赋值操作
-     */
-    const mountedRef = useMountedRef()
     
+    /**
+     *  1. 当data中某个item更新时，如何主动重新触发请求，
+     * 这就需要保存触发更新函数
+     */
     const [retry, setRetry] = useState(() => () => {})
 
     const setData = (data: T) => setState({
@@ -60,10 +58,10 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
         })
         setState({...state, stat: 'loading'})
         return promise.then(data => {
-            if(mountedRef.current) setData(data)
+            setData(data)
             return data
         }).catch(error => {
-            if(mountedRef.current) setError(error)
+            setError(error)
             if(config.throwOnError)  return Promise.reject(error)
             return error
         })
