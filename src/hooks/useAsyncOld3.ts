@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useMountedRef } from "./useMountedRef";
 
 interface State<T> {
@@ -17,27 +17,6 @@ const defaultConfig = {
     throwOnError: false
 }
 
-/**
- * 
- * 如何避免调用 run 时，进入循环调用
- * useEffect(() => {
-    run(fetchProjects(), {
-        retry: fetchProjects
-    })
-}, [param, run])
-
- useMemo 和 useCallback 都是为了依赖，而存在的。
- 具体就是，非基本类型依赖
- 如果我们定义了 非基本类型依赖，就需要使用 useMemo, useCallback 把这个依赖 限制框住
- 例如：
- useEffect(() => {
-    run(fetchProjects(), {
-        retry: fetchProjects
-    })
-}, [param, run, fetchProjects])
-
-run, fetchProjects 函数需要用 useCallback 限制住
- */
 export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defaultConfig) => {
     const config = {...defaultConfig, ...initialConfig}
     const [state, setState] = useState<State<T>>({
@@ -52,21 +31,24 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
     
     const [retry, setRetry] = useState(() => () => {})
 
-    const setData = useCallback((data: T) => setState({
+    const setData = (data: T) => setState({
         data,
         stat: 'success',
         error:null
-    }), [])
-    const setError = useCallback((error: Error) => setState({
+    })
+    const setError = (error: Error) => setState({
         error,
         stat: 'error',
         data: null
-    }), [])
+    })
 
     /**
-     * 2. useCallback 缓存函数
+     * 2. 改造run函数,这样一种写法，并不能保存Promise最原始状态，只是存储了promise执行后的值。
+     * setRetry(() => () => {
+     *    run(promise)
+     * })
      */
-    const run = useCallback(async (promise: Promise<T>, runConfig?: {retry: () => Promise<T>}) => {
+    const run = async (promise: Promise<T>, runConfig?: {retry: () => Promise<T>}) => {
         if(!promise || !promise.then) {
             throw new Error('请传入 Promise 类型数据')
         }
@@ -76,11 +58,7 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
                 run(runConfig?.retry(), runConfig)
             }
         })
-        // 1. 方案一
-        // setState({...state, stat: 'loading'})
-        // 2. 方案二：不依赖state: 解决循环依赖，调用
-        setState(prevState => ({...prevState, stat: 'loading'}))
-
+        setState({...state, stat: 'loading'})
         return promise.then(data => {
             if(mountedRef.current) setData(data)
             return data
@@ -89,7 +67,7 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
             if(config.throwOnError)  return Promise.reject(error)
             return error
         })
-    }, [ config.throwOnError, mountedRef, setData, setError]) // state
+    }
 
     return {
         isIdle: state.stat === 'idle',
