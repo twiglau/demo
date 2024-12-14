@@ -4,6 +4,8 @@ import { Project } from 'types/project'
 import { Table, TableProps } from 'antd';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom'
+import { Pin } from 'components/pin'
+import { useEditProject } from 'hooks/project';
 //TODO react-router和react-router-dom的关系
 /**
  * 1. 类似于 react 和 react-dom/react-native/react-vr...
@@ -18,10 +20,26 @@ interface ListProps extends TableProps<Project> {
     users: User[]
 }
 export const List = ({users, ...props}: ListProps) => {
+  const { mutate } = useEditProject()
+  // 2. 方式二
+//   const pinProject = (id:number, pin: boolean) => mutate({id, pin})
+  // 3. 方式三： 注意，id 已经确定， pin 是点击后确定   柯里化改造函数
+  const pinProject = (id:number) => (pin: boolean) => mutate({id,pin})
    return <Table 
    rowKey={"id"}
    pagination={false} 
    columns={[
+    { title: <Pin checked={true} disabled={true} />, render(value, record, idnex){
+        return <Pin 
+        checked={record.pin}
+        // 1. 方式一
+        // onCheckedChange={pin => mutate({...record, pin})}
+        // 2. 方式二
+        // onCheckedChange={pin => pinProject(record.id, pin)}
+        // 3. 方式三
+        onCheckedChange={pinProject(record.id)}
+        />
+    }},
     {title:'名称', dataIndex: 'name', sorter: (a,b) => a.name.localeCompare(b.name), render(value, record, index) {
         return <Link to={`${record.id   }`}>{record.name}</Link>
     }},

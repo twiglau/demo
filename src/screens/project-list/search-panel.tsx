@@ -1,6 +1,7 @@
 
 
 import { Form, Input, Select } from "antd";
+import { UserSelect } from "components/use-select";
 import React from "react"
 import { Project } from "types/project";
 import { User } from 'types/user'
@@ -24,13 +25,13 @@ export const SearchPanel = ({users, param, setParam}: SearchPanelProps) => {
             })} />
         </Form.Item>
         <Form.Item>
-            <Select value={param.personId} onChange={value => setParam({
+            <UserSelect 
+            defaultOptionName="负责人"
+            value={param.personId} 
+            onChange={value => setParam({
                 ...param,
                 personId: value
-            })}>
-                <Select.Option value={''}>负责人</Select.Option>
-                {users.map(user => <Select.Option value={String(user.id)} key={user.id}>{user.name}</Select.Option>)}
-            </Select>
+            })} />
         </Form.Item>
     </Form>
 }

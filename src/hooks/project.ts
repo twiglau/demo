@@ -18,3 +18,21 @@ export const useProjects = (param?: Partial<Project>) => {
 
     return result
 }
+
+
+export const useEditProject = () => {
+    const { run,...asyncResult } = useAsync()
+    const client = useHttp()
+
+    const mutate = (params: Partial<Project>) => {
+        return run(client(`projects/${params.id}`, {
+            method: 'PATCH',
+            data: params,
+        }))
+    }
+
+    return {
+        mutate,
+        ...asyncResult
+    }
+}
