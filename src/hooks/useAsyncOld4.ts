@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMountedRef } from "./useMountedRef";
 
 interface State<T> {
@@ -17,40 +17,55 @@ const defaultConfig = {
     throwOnError: false
 }
 
-const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
-    const mountedRef = useMountedRef()
-    return useCallback(
-        (...args:T[]) => (mountedRef.current ? dispatch(...args) : void 0),
-        [dispatch, mountedRef]
-    )
-}
-// 在某些场景下，useReducer 会比 useState 更适用，例如 state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等
+/**
+ * 
+ * 如何避免调用 run 时，进入循环调用
+ * useEffect(() => {
+    run(fetchProjects(), {
+        retry: fetchProjects
+    })
+}, [param, run])
+
+ useMemo 和 useCallback 都是为了依赖，而存在的。
+ 具体就是，非基本类型依赖
+ 如果我们定义了 非基本类型依赖，就需要使用 useMemo, useCallback 把这个依赖 限制框住
+ 例如：
+ useEffect(() => {
+    run(fetchProjects(), {
+        retry: fetchProjects
+    })
+}, [param, run, fetchProjects])
+
+run, fetchProjects 函数需要用 useCallback 限制住
+ */
 export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defaultConfig) => {
     const config = {...defaultConfig, ...initialConfig}
-    
-    const [ state, dispatch ] = useReducer(
-        (state: State<T>,action: Partial<State<T>>) => ({...state, ...action}),
-        {
-            ...defaultInitialState,
-            ...initialState
-        }
-    )
+    const [state, setState] = useState<State<T>>({
+        ...defaultInitialState,
+        ...initialState
+    })
 
-    const safeDispatch = useSafeDispatch(dispatch)
+    /**
+     * 阻止页面卸载时，进行赋值操作
+     */
+    const mountedRef = useMountedRef()
+    
     const [retry, setRetry] = useState(() => () => {})
 
-    const setData = useCallback((data: T) => safeDispatch({
+    const setData = useCallback((data: T) => setState({
         data,
         stat: 'success',
         error:null
-    }), [safeDispatch])
-    const setError = useCallback((error: Error) => safeDispatch({
+    }), [])
+    const setError = useCallback((error: Error) => setState({
         error,
         stat: 'error',
         data: null
-    }), [safeDispatch])
+    }), [])
 
-    
+    /**
+     * 2. useCallback 缓存函数
+     */
     const run = useCallback(async (promise: Promise<T>, runConfig?: {retry: () => Promise<T>}) => {
         if(!promise || !promise.then) {
             throw new Error('请传入 Promise 类型数据')
@@ -61,18 +76,20 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
                 run(runConfig?.retry(), runConfig)
             }
         })
-
-        safeDispatch({ stat: 'loading'})
+        // 1. 方案一
+        // setState({...state, stat: 'loading'})
+        // 2. 方案二：不依赖state: 解决循环依赖，调用
+        setState(prevState => ({...prevState, stat: 'loading'}))
 
         return promise.then(data => {
-            setData(data)
+            if(mountedRef.current) setData(data)
             return data
         }).catch(error => {
-            setError(error)
+            if(mountedRef.current) setError(error)
             if(config.throwOnError)  return Promise.reject(error)
             return error
         })
-    }, [config.throwOnError, setData, setError, safeDispatch]) // state
+    }, [ config.throwOnError, mountedRef, setData, setError]) // state
 
     return {
         isIdle: state.stat === 'idle',
