@@ -22,6 +22,12 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState
     })
+    
+    /**
+     *  1. 当data中某个item更新时，如何主动重新触发请求，
+     * 这就需要保存触发更新函数
+     */
+    const [retry, setRetry] = useState(() => () => {})
 
     const setData = (data: T) => setState({
         data,
@@ -35,21 +41,26 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
     })
 
     /**
-     * async 函数
-     * 1. return 正常返回值 =>相当于resolve到结果
-     * 2. return Promise.reject(error)相当于reject掉错误
-     * 3. 当用 try...catch 时， 就能捕获的 reject 的结果了
+     * 2. 改造run函数,这样一种写法，并不能保存Promise最原始状态，只是存储了promise执行后的值。
+     * setRetry(() => () => {
+     *    run(promise)
+     * })
      */
-    const run = async (promise: Promise<T>) => {
+    const run = async (promise: Promise<T>, runConfig?: {retry: () => Promise<T>}) => {
         if(!promise || !promise.then) {
             throw new Error('请传入 Promise 类型数据')
         }
+        
+        setRetry(() => () => {
+            if(runConfig?.retry) {
+                run(runConfig?.retry(), runConfig)
+            }
+        })
         setState({...state, stat: 'loading'})
         return promise.then(data => {
             setData(data)
             return data
         }).catch(error => {
-            // TODO：catch会消化异常，如果不主动抛出， 外面是接收不到异常的
             setError(error)
             if(config.throwOnError)  return Promise.reject(error)
             return error
@@ -64,6 +75,7 @@ export const useAsync = <T>(initialState?: State<T>, initialConfig?: typeof defa
         run,
         setData,
         setError,
+        retry,
         ...state
     }
 

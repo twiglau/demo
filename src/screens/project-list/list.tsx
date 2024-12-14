@@ -17,14 +17,15 @@ import { useEditProject } from 'hooks/project';
  * 
  */
 interface ListProps extends TableProps<Project> {
-    users: User[]
+    users: User[];
+    refresh?:() => void;
 }
 export const List = ({users, ...props}: ListProps) => {
   const { mutate } = useEditProject()
   // 2. 方式二
 //   const pinProject = (id:number, pin: boolean) => mutate({id, pin})
   // 3. 方式三： 注意，id 已经确定， pin 是点击后确定   柯里化改造函数
-  const pinProject = (id:number) => (pin: boolean) => mutate({id,pin})
+  const pinProject = (id:number) => (pin: boolean) => mutate({id,pin}).then(() => props.refresh?.())
    return <Table 
    rowKey={"id"}
    pagination={false} 
