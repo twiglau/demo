@@ -9,6 +9,8 @@ import { useUsers } from 'hooks/user'
 import { useDocumentTitle } from 'hooks/useDocumentTitle'
 import { useProjectsSearchParams } from './project-utils'
 import {Button } from 'antd'
+import { useDispatch } from 'store'
+import { projectListActions } from './project-list.slice'
 
 const initialData = {
     name: '',
@@ -18,7 +20,7 @@ const initialData = {
 export const ProjectListScreen = () => {
     // const [, setParam ] = useState(initialData)
     useDocumentTitle('项目列表', false)
-
+    const dispatch = useDispatch()
    
     const [param, setParam] = useProjectsSearchParams()
     const debounceParam = useDebounce(param, 2000)
@@ -33,7 +35,10 @@ export const ProjectListScreen = () => {
     return <Container>
         <Row between={true}>
             <h1>项目列表</h1>
-            <ButtonNoPadding type={'link'}>创建项目</ButtonNoPadding>
+            <ButtonNoPadding 
+            type={'link'} 
+            onClick={() => dispatch(projectListActions.openModel({}))}
+            >创建项目</ButtonNoPadding>
         </Row>
         <select value={defaultValue} onChange={evt => {
             const value = evt.target.value

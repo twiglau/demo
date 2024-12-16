@@ -1,5 +1,4 @@
 import { User } from "types/user"
-import { apiUrl } from "utils"
 import { http } from 'utils/http'
 
 const localStorageKey = '__auth_provider_token__'

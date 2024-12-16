@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom'
 import { Pin } from 'components/pin'
 import { useEditProject } from 'hooks/project';
 import { ButtonNoPadding } from 'components/lib';
+import { useDispatch } from 'store';
+import { projectListActions } from './project-list.slice';
 //TODO react-router和react-router-dom的关系
 /**
  * 1. 类似于 react 和 react-dom/react-native/react-vr...
@@ -30,11 +32,13 @@ export const List = ({users, ...props}: ListProps) => {
   // 3. 方式三： 注意，id 已经确定， pin 是点击后确定   柯里化改造函数
   const pinProject = (id:number) => (pin: boolean) => mutate({id,pin}).then(() => props.refresh?.())
 
+  const dispatch = useDispatch()
+
   const items: MenuProps['items'] = [
         {
             key:'1',
             label: (
-                <ButtonNoPadding type={ 'link' }>
+                <ButtonNoPadding type={ 'link' } onClick={() => dispatch(projectListActions.openModel({}))}>
                 编辑
                 </ButtonNoPadding>
             )

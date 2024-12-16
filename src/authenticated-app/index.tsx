@@ -15,6 +15,7 @@ import { ProjectScreen } from 'screens/projects'
 import { resetRoute } from 'utils'
 import { ProjectPopover } from 'components/project-popover'
 import { ButtonNoPadding } from 'components/lib'
+import { ProjectModal } from 'screens/project-list/project-modal'
 
 export const AuthenticatedApp = () => {
     let throwError: any = undefined
@@ -35,6 +36,7 @@ export const AuthenticatedApp = () => {
                 </Routes>
             </Router>
         </Main>
+        <ProjectModal />
     </Container>
 }
 
