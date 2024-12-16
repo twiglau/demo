@@ -39,8 +39,10 @@ export const FullPageErrorFallback = ({error}:{error: Error|null}) => {
 }
 
 // TODO: 类型守卫
+// 当符合 value?.message 这个条件是true的话，
+// value is Error （value就是Error这个类型）
 const isError = (value: any): value is Error => value?.message
-export const ErrorBox = ({error}:{error: Error | null}) => {
+export const ErrorBox = ({error}:{error: Error|null}) => {
     if(isError(error)) {
         return (
             <Typography.Text type={'danger'}>{error?.message}</Typography.Text>

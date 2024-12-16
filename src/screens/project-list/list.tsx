@@ -6,7 +6,7 @@ import type {MenuProps}  from 'antd';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom'
 import { Pin } from 'components/pin'
-import { useEditProject } from 'hooks/project';
+import { useEditProject, useProjectModel } from 'hooks/project';
 import { ButtonNoPadding } from 'components/lib';
 //TODO react-router和react-router-dom的关系
 /**
@@ -20,7 +20,6 @@ import { ButtonNoPadding } from 'components/lib';
  */
 interface ListProps extends TableProps<Project> {
     users: User[];
-    refresh?:() => void;
 }
 
 export const List = ({users, ...props}: ListProps) => {
@@ -28,8 +27,14 @@ export const List = ({users, ...props}: ListProps) => {
   // 2. 方式二
 //   const pinProject = (id:number, pin: boolean) => mutate({id, pin})
   // 3. 方式三： 注意，id 已经确定， pin 是点击后确定   柯里化改造函数
-  const pinProject = (id:number) => (pin: boolean) => mutate({id,pin}).then(() => props.refresh?.())
+  const pinProject = (id:number) => (pin: boolean) => mutate({id,pin})
+  
+  const { startEdit } = useProjectModel()
+  const editProject = (id:number) => startEdit(id)
 
+  const itemOnClick = ({record}:{record:Project}) => ({ key }:{key:string}) => {
+    console.log('key:',key, record)
+  }
   const items: MenuProps['items'] = [
         {
             key:'1',
@@ -79,7 +84,7 @@ export const List = ({users, ...props}: ListProps) => {
         </span>
     }},
     {title:'操作',render(value,record) {
-            return <Dropdown menu={{items}}>
+            return <Dropdown menu={{items, onClick:itemOnClick({record})}}>
                 <ButtonNoPadding type={'link'}>...</ButtonNoPadding>
             </Dropdown>
         }

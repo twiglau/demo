@@ -1,60 +1,86 @@
-import { useAsync } from "./useAsync"
 import { Project } from "types/project"
-import { useCallback, useEffect } from 'react'
-import { cleanObject } from "utils"
 import { useHttp } from "utils/http"
 import { useUrlQueryParam } from "hooks/useUrlQueryParam"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 
 
 // TODO: 如何使用参数
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp()
-    const {run, ...result } = useAsync<Project[]>()
 
-    const fetchProjects = useCallback(() => client("projects", { data: cleanObject(param || {})}), [client, param])
+    return useQuery<Project[]>({
+        queryKey: ["projects", param],
+        queryFn: () => client("projects", { data: param})
+    })
 
-    useEffect(() => {
-        run(fetchProjects(), {
-            retry: fetchProjects
-        })
-    }, [param, run, fetchProjects])
-
-    return result
 }
 
 
 export const useEditProject = () => {
-    const { run,...asyncResult } = useAsync()
     const client = useHttp()
-
-    const mutate = (params: Partial<Project>) => {
-        return run(client(`projects/${params.id}`, {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (params: Partial<Project>) => client(`projects/${params.id}`, {
             method: 'PATCH',
             data: params,
-        }))
-    }
+        }),
+        onSuccess:() => queryClient.invalidateQueries({
+            queryKey: ['projects']
+        })
+    })
 
-    return {
-        mutate,
-        ...asyncResult
-    }
+}
+
+export const useAddProject = () => {
+    const client = useHttp()
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (params: Partial<Project>) => client(`projects/${params.id}`, {
+            method: 'POST',
+            data: params,
+        }),
+        onSuccess:() => queryClient.invalidateQueries({
+            queryKey: ['projects']
+        })
+    })
+}
+
+export const useProject = (id?:number) => {
+    const client = useHttp()
+
+    return useQuery({
+        queryKey: ['project', id],
+        queryFn: () => client(`projects/${id}`),
+        enabled: Boolean(id)
+    })
 }
 
 
 export const useProjectModel = () => {
+
     const [{projectCreate}, setProjectCreate] = useUrlQueryParam(['projectCreate'])
+    const [{editingProjectId}, setEditingProjectId] = useUrlQueryParam(['editingProjectId'])
+
+    const { data: editingProject,isLoading } = useProject(Number(editingProjectId))
 
     const open = () => setProjectCreate({ projectCreate: true })
-    const close = () => setProjectCreate({ projectCreate: false })
+    const close = () => {
+        setProjectCreate({ projectCreate: undefined })
+        setEditingProjectId({ editingProjectId: undefined })
+    }
+    const startEdit = (id: number) => setEditingProjectId({editingProjectId: id})
     
     /**
      * 超过三个以上，返回对象
      * 元组变量命名更为方便
      */
     return {
-        modalOpen: projectCreate === 'true',
+        modalOpen: projectCreate === 'true' || Boolean(editingProject),
         open,
-        close
+        close,
+        startEdit,
+        editingProject,
+        isLoading
     }
 }
