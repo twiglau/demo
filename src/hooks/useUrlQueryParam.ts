@@ -3,6 +3,7 @@ import { URLSearchParamsInit, useSearchParams } from 'react-router-dom'
 import { cleanObject } from 'utils'
 
 
+
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
     const [searchParams, setSearchParam] = useSearchParams()
     const [stateKeys] = useState(keys)

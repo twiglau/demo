@@ -3,6 +3,7 @@ import { Project } from "types/project"
 import { useCallback, useEffect } from 'react'
 import { cleanObject } from "utils"
 import { useHttp } from "utils/http"
+import { useUrlQueryParam } from "hooks/useUrlQueryParam"
 
 
 
@@ -37,5 +38,23 @@ export const useEditProject = () => {
     return {
         mutate,
         ...asyncResult
+    }
+}
+
+
+export const useProjectModel = () => {
+    const [{projectCreate}, setProjectCreate] = useUrlQueryParam(['projectCreate'])
+
+    const open = () => setProjectCreate({ projectCreate: true })
+    const close = () => setProjectCreate({ projectCreate: false })
+    
+    /**
+     * 超过三个以上，返回对象
+     * 元组变量命名更为方便
+     */
+    return {
+        modalOpen: projectCreate === 'true',
+        open,
+        close
     }
 }

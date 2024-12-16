@@ -15,26 +15,28 @@ import { ProjectScreen } from 'screens/projects'
 import { resetRoute } from 'utils'
 import { ProjectPopover } from 'components/project-popover'
 import { ButtonNoPadding } from 'components/lib'
+import { ProjectModal } from 'screens/project-list/project-modal'
 
 export const AuthenticatedApp = () => {
     let throwError: any = undefined
     return <Container>
-        <PageHeader />
-        <Main>
-            {/* TODO: 测试异常 */}
-            {/* {throwError.testFunc()} */}
+        <Router>
+            <PageHeader />
+            <Main>
+                {/* TODO: 测试异常 */}
+                {/* {throwError.testFunc()} */}
 
-            {/* 测试代码 */}
-            {/* <Test /> */}
-            <Router>
+                {/* 测试代码 */}
+                {/* <Test /> */}
                 <Routes>
                     <Route path={'/projects'} element={<ProjectListScreen />} />
                     <Route path={'/projects/:projectId/*'} element={<ProjectScreen />}/>
                     {/* 如果以上路由没有匹配到，默认跳转到 projects 中 */}
                     <Route path='*' element={<Navigate to="/projects" replace={true} />} />
                 </Routes>
-            </Router>
-        </Main>
+            </Main>
+            <ProjectModal />
+        </Router>
     </Container>
 }
 
