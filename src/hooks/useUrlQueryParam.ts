@@ -13,7 +13,8 @@ export const useSetUrlSearchParam = () => {
   };
 };
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
-  const [searchParams, setSearchParam] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const setSearchParam = useSetUrlSearchParam();
   const [stateKeys] = useState(keys);
 
   return [
@@ -32,11 +33,7 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
       // components/test-iterator.tsx
       // iterator: https://codesandbox.io/p/sandbox/strange-panka-wsdgy5
       // 可以将 URLSearchParams 对象 转变为 普通对象， 然后再将 普通对象 解构出来。
-      const o = cleanObject({
-        ...Object.fromEntries(searchParams),
-        ...params,
-      }) as URLSearchParamsInit;
-      setSearchParam(o);
+      return setSearchParam(params);
     },
   ] as const;
 };
