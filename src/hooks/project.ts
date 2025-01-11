@@ -1,7 +1,12 @@
 import { Project } from "types/project";
 import { useHttp } from "utils/http";
 import { useSetUrlSearchParam, useUrlQueryParam } from "hooks/useUrlQueryParam";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, QueryKey } from "@tanstack/react-query";
+import {
+  useAddConfig,
+  useDeleteConfig,
+  useEditConfig,
+} from "./useOptimisticOptions";
 
 // TODO: 如何使用参数
 export const useProjects = (param?: Partial<Project>) => {
@@ -13,35 +18,41 @@ export const useProjects = (param?: Partial<Project>) => {
   });
 };
 
-export const useEditProject = () => {
+export const useEditProject = (queryKey: QueryKey) => {
   const client = useHttp();
-  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (params: Partial<Project>) =>
       client(`projects/${params.id}`, {
         method: "PATCH",
         data: params,
       }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["projects"],
-      }),
+    ...useEditConfig<Partial<Project>>(queryKey),
   });
 };
 
-export const useAddProject = () => {
+export const useAddProject = (queryKey: QueryKey) => {
   const client = useHttp();
-  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (params: Partial<Project>) =>
-      client(`projects/${params.id}`, {
+      client(`projects`, {
         method: "POST",
         data: params,
       }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["projects"],
+    ...useAddConfig<Partial<Project>>(queryKey),
+  });
+};
+
+export const useDeleteProject = (queryKey: QueryKey) => {
+  const client = useHttp();
+
+  return useMutation({
+    mutationFn: (params: Partial<Project>) =>
+      client(`projects/${params.id}`, {
+        method: "DELETE",
       }),
+    ...useDeleteConfig<Partial<Project>>(queryKey),
   });
 };
 
@@ -51,7 +62,7 @@ export const useProject = (id?: number) => {
   return useQuery({
     queryKey: ["project", id],
     queryFn: () => client(`projects/${id}`),
-    enabled: Boolean(id),
+    enabled: Boolean(id), // 希望id不存在时,就不用请求了
   });
 };
 
@@ -70,7 +81,7 @@ export const useProjectModel = () => {
 
   const open = () => setProjectCreate({ projectCreate: true });
   const close = () => {
-    setUrlParams({ projectCreate: "", editingProjectId: "" });
+    setUrlParams({ projectCreate: undefined, editingProjectId: undefined });
     // setProjectCreate({ projectCreate: undefined });
     // 这样关闭不了弹框
     // setEditingProjectId({ editingProjectId: undefined });
