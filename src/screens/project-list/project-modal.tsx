@@ -25,8 +25,7 @@ export const ProjectModal = () => {
 
   const onFinish = (values: FormData) => {
     mutateAsync({ ...editingProject, ...values }).then(() => {
-      form.resetFields();
-      close();
+      closeModal();
     });
   };
   const closeModal = () => {
