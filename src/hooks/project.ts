@@ -59,7 +59,7 @@ export const useDeleteProject = (queryKey: QueryKey) => {
 export const useProject = (id?: number) => {
   const client = useHttp();
 
-  return useQuery({
+  return useQuery<Project>({
     queryKey: ["project", id],
     queryFn: () => client(`projects/${id}`),
     enabled: Boolean(id), // 希望id不存在时,就不用请求了
