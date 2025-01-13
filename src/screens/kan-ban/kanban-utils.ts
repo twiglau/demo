@@ -1,4 +1,6 @@
 import { useProject } from "hooks/project";
+import { useUrlQueryParam } from "hooks/useUrlQueryParam";
+import { useMemo } from "react";
 import { useLocation } from "react-router";
 
 export const useProjectIdInUrl = () => {
@@ -10,9 +12,21 @@ export const useProjectIdInUrl = () => {
 
 export const useProjectInUrl = () => useProject(useProjectIdInUrl());
 
-export const useKanbansSearchParams = () => ({
-  projectId: useProjectIdInUrl(),
-});
+export const useKanbansSearchParams = () => {
+  const [param] = useUrlQueryParam(["name", "typeId", "processorId", "tagId"]);
+  const projectId = useProjectIdInUrl();
+
+  return useMemo(
+    () => ({
+      projectId,
+      typeId: Number(param.typeId) || undefined,
+      processorId: Number(param.processorId) || undefined,
+      tagId: Number(param.tagId) || undefined,
+      name: param.name,
+    }),
+    [projectId, param],
+  );
+};
 
 export const useKanbansQueryKey = () => ["kanbans", useKanbansSearchParams()];
 
