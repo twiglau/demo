@@ -3,15 +3,19 @@ import { useTasks } from "hooks/task";
 import { Kanban } from "types/kanban";
 import { useTasksSearchParams } from "./kanban-utils";
 import { useTaskTypes } from "hooks/task-type";
-import taskIcon from "assets/task.svg";
-import bugIcon from "assets/bug.svg";
+import { ReactComponent as TaskIcon } from "assets/task.svg";
+import { ReactComponent as BugIcon } from "assets/bug.svg";
 import { Card } from "antd";
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
   const { data: taskTypes } = useTaskTypes();
   const name = taskTypes?.find((type) => type.id === id)?.name;
-  if (!name) return <span></span>;
-  return <img src={name === "task" ? taskIcon : bugIcon} alt={name} />;
+  if (!name) return null;
+  return name === "task" ? (
+    <TaskIcon color={"rgb(38, 132, 255)"} width={"1.8rem"} height={"1.8rem"} />
+  ) : (
+    <BugIcon color={"red"} width={"2rem"} height={"2rem"} />
+  );
 };
 export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
   const { data: allTasks } = useTasks(useTasksSearchParams());
@@ -22,9 +26,11 @@ export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
       <p>{kanban.name}</p>
       <TasksContainer>
         {tasks?.map((task) => (
-          <Card style={{ marginBottom: "0.5rem" }} key={task.id}>
-            <div>{task.name}</div>
-            <TaskTypeIcon id={task.id} />
+          <Card key={task.id}>
+            <TaskItem>
+              <span>{task.name}</span>
+              <TaskTypeIcon id={task.typeId} />
+            </TaskItem>
           </Card>
         ))}
       </TasksContainer>
@@ -49,4 +55,10 @@ const TasksContainer = styled.div`
   ::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const TaskItem = styled.div`
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
 `;

@@ -34,10 +34,10 @@ export const AuthenticatedApp = () => {
               element={<ProjectScreen />}
             />
             {/* 如果以上路由没有匹配到，默认跳转到 projects 中 */}
-            <Route
+            {/* <Route
               path="*"
               element={<Navigate to="/projects" replace={true} />}
-            />
+            /> */}
           </Routes>
         </Main>
         <ProjectModal />
@@ -98,4 +98,6 @@ const Header = styled(Row)`
 `;
 const HeaderLeft = styled(Row)``;
 const HeaderRight = styled.div``;
-const Main = styled.main``;
+const Main = styled.main`
+  display: flex;
+`;
