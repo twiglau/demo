@@ -7,8 +7,7 @@ import type { MenuProps } from "antd";
 // 可以把 svg 当做组件使用
 import { ReactComponent as SoftwareLogo } from "assets/software-logo.svg";
 import { useAuth } from "context/auth-context";
-import { Navigate, Route, Routes } from "react-router";
-import { BrowserRouter as Router } from "react-router-dom";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router";
 import { ProjectScreen } from "screens/projects";
 import { resetRoute } from "utils";
 import { ProjectPopover } from "components/project-popover";
@@ -19,7 +18,7 @@ export const AuthenticatedApp = () => {
   let throwError: any = undefined;
   return (
     <Container>
-      <Router>
+      <BrowserRouter>
         <PageHeader />
         <Main>
           {/* TODO: 测试异常 */}
@@ -28,20 +27,15 @@ export const AuthenticatedApp = () => {
           {/* 测试代码 */}
           {/* <Test /> */}
           <Routes>
+            <Route path={"/"} element={<Navigate to={"/projects"} />} />
             <Route path={"/projects"} element={<ProjectListScreen />} />
-            <Route
-              path={"/projects/:projectId/*"}
-              element={<ProjectScreen />}
-            />
-            {/* 如果以上路由没有匹配到，默认跳转到 projects 中 */}
-            {/* <Route
-              path="*"
-              element={<Navigate to="/projects" replace={true} />}
-            /> */}
+            <Route path={"/projects/:projectId"}>
+              <Route path="*" element={<ProjectScreen />} />
+            </Route>
           </Routes>
         </Main>
         <ProjectModal />
-      </Router>
+      </BrowserRouter>
     </Container>
   );
 };

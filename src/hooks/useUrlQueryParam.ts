@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
+import { URLSearchParamsInit, useSearchParams } from "react-router";
 import { cleanObject } from "utils";
 
 export const useSetUrlSearchParam = () => {

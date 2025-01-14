@@ -4,7 +4,7 @@ import { Project } from "types/project";
 import { Dropdown, Modal, Table, TableProps } from "antd";
 import type { MenuProps } from "antd";
 import dayjs from "dayjs";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Pin } from "components/pin";
 import {
   useDeleteProject,

@@ -1,4 +1,10 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from "react-router";
 import { KanbanScreen } from "screens/kan-ban";
 import { EpicScreen } from "screens/epic";
 import styled from "@emotion/styled";
@@ -13,11 +19,10 @@ const useRouteType = () => {
 };
 export const ProjectScreen = () => {
   const selectKey = useRouteType();
-  const location = useLocation();
   const navigate = useNavigate();
 
   const onClick: MenuProps["onClick"] = (e) => {
-    navigate(location.pathname + e.key);
+    navigate(`../${e.key}`);
   };
   const items: MenuItem[] = [
     {
@@ -41,14 +46,13 @@ export const ProjectScreen = () => {
       </Aside>
       <Main>
         <Routes>
+          <Route path="*" element={<Navigate to="kanban" />} />
           {/* 使用 '/kanban', '/epic' 为什么路由匹配不到想要的： projects/3/kanban */}
           {/* /kanban 的意思是使用了 根路由，需要把 / 去掉 */}
           {/* projects/:projectId/kanban */}
-          <Route path={"/kanban"} element={<KanbanScreen />} />
+          <Route path={"kanban"} element={<KanbanScreen />} />
           {/* projects/:projectId/epic */}
-          <Route path={"/epic"} element={<EpicScreen />} />
-          {/* 如果以上都匹配不到，默认匹配到 看板 */}
-          {/* <Route path="*" element={<Navigate to="/kanban" />} /> */}
+          <Route path={"epic"} element={<EpicScreen />} />
         </Routes>
       </Main>
     </Container>
