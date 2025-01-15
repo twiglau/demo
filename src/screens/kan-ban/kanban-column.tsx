@@ -6,6 +6,7 @@ import { useTaskTypes } from "hooks/task-type";
 import { ReactComponent as TaskIcon } from "assets/task.svg";
 import { ReactComponent as BugIcon } from "assets/bug.svg";
 import { Card } from "antd";
+import { CreateTask } from "./create-task";
 
 const TaskTypeIcon = ({ id }: { id: number }) => {
   const { data: taskTypes } = useTaskTypes();
@@ -33,11 +34,13 @@ export const KanbanColumn = ({ kanban }: { kanban: Kanban }) => {
             </TaskItem>
           </Card>
         ))}
+
+        <CreateTask kanbanId={kanban.id} />
       </TasksContainer>
     </ColumnsContainer>
   );
 };
-const ColumnsContainer = styled.div`
+export const ColumnsContainer = styled.div`
   min-width: 27rem;
   border-radius: 1rem;
   background-color: lightgray;
